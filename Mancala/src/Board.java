@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ public class Board extends JComponent{
 	private final static int NUM_OF_PITS = 12;
 	private final static int PIT_RADIUS = 50;
 	private final static int PIT_SPACING = 10;
+	private final static Color brown = new Color(102,51,0);
+	
 	public Board(int x, int y, double width, double length) {
 		this.x = x;
 		this.y = y;
@@ -34,13 +37,13 @@ public class Board extends JComponent{
 				xpos = this.x + 30;
 				ypos = (int) (this.length - 30 );
 			}
-			pits.add(new Pit(this.x + xpos, ypos, PIT_RADIUS));
+			pits.add(new Pit(this.x + xpos, ypos, PIT_RADIUS, Color.WHITE));
 			count++;
 			xpos += PIT_SPACING + PIT_RADIUS;
 		}
 		
-		playerAPool = new PlayerPool(this.x + PIT_SPACING , this.y + PIT_SPACING, 50, length - 20);
-		playerBPool = new PlayerPool((int) this.width - PIT_SPACING , this.y + PIT_SPACING, 50, length - 20);
+		playerAPool = new PlayerPool(this.x + PIT_SPACING , this.y + PIT_SPACING, 50,Color.WHITE, length - 20);
+		playerBPool = new PlayerPool((int) this.width - PIT_SPACING , this.y + PIT_SPACING, 50, Color.WHITE, length - 20);
 		
 
 	}
@@ -48,6 +51,8 @@ public class Board extends JComponent{
 	public void draw(Graphics2D g2) {
 		RoundRectangle2D.Double board = new RoundRectangle2D.Double(x, y, width, length, 50,50);
 		g2.draw(board);
+		g2.setColor(brown);
+		g2.fill(board);
 		for(Pit p :pits) {
 			p.draw(g2);
 		}
