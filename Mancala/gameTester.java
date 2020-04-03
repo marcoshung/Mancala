@@ -5,16 +5,41 @@ public class gameTester {
 
     public static void main(String[] args) {
         GameManager game;
-    
+  /*  
         //1. start a new game:
         game = new GameManager();
-        printGameState(game.get_StateList());
-        printBoard(game.load_current_GameState());
+        //printGameState(game.get_StateList());
+        //printBoard(game.load_current_GameState());
 
         //2. set stones per pit = 3
         game.set_stoneInPit(3);
+        //printGameState(game.get_StateList());
+        //printBoard(game.load_current_GameState());
+
+        //3. Player A picks A6
+        game.playGame(5);
+        //printGameState(game.get_StateList());
+        printBoard(game.load_current_GameState());
+
+        //4. Player B picks B1
+        game.playGame(6);
         printGameState(game.get_StateList());
         printBoard(game.load_current_GameState());
+  */
+
+        //5. reset game & Player B picks B6
+        game = new GameManager();
+        game.set_stoneInPit(3);     
+        game.playGame(11);
+
+        //printGameState(game.get_StateList());
+        //printBoard(game.load_current_GameState());
+        
+        //6. Player A picks A6
+        game.playGame(5);
+        printGameState(game.get_StateList());
+        printBoard(game.load_current_GameState());
+        
 
 
     }

@@ -24,20 +24,19 @@ public class GameManager {
 
     }
 
-    public void set_stoneInPit(final int stoneInPit) {
+    public void set_stoneInPit(int stoneInPit) {
         this.stoneInPit = stoneInPit;
         init_Game();
         store_GameState();
     }
 
-    public void playGame(final int n_pit) {
+    public void playGame(int n_pit) {
 
-        // from which state:
-
-        gameRound++;
-        // run game base on this state
+        // load data from the latest state to GameManager
+        assign_state_toGame(load_current_GameState());
+        // run game base on the data 
         run_Game(n_pit);
-
+        gameRound++; 
         // store data to a new state
         store_GameState();
 
@@ -46,7 +45,7 @@ public class GameManager {
     public void undoGame() {
 
         // undo to which step???
-        final int target_gameRound = 0;
+        int target_gameRound = 0;
         /////////////////////////
         load_GameState(target_gameRound);
 
@@ -72,40 +71,46 @@ public class GameManager {
 
     }
 
-    private void run_Game(final int n_pit) {
-        int out_stone;
+    private void run_Game(int n_pit) {
+        int take_out_stone;
         int cur_pit = n_pit;
         int tmp_mancala;
 
         // check turns:
-        if (cur_pit < 6)
+        if (cur_pit < 6){
             isPlayerA = true;
+        } else {
+            isPlayerA = false;
+        }
+            
 
         // reset the current pit
-        out_stone = pits.get(cur_pit);
+        take_out_stone = pits.get(cur_pit);
         pits.set(n_pit, 0);
 
-        // run stones:
-        while (out_stone > 0) {
+        //jump to next pit
+        cur_pit = (cur_pit + 1) % TOTAL_PITS;   //cur_pit++
 
-            cur_pit = (cur_pit + 1) % TOTAL_PITS;
+        // run stones:
+        while (take_out_stone > 0) {
 
             // Meet mancala: mancala operation
             if (cur_pit == 0 && !isPlayerA) {
-                tmp_mancala = mancala.get(1); // for mancala B
+                tmp_mancala = mancala.get(1);           //for mancala B
                 mancala.set(1, tmp_mancala + 1);
-                out_stone--;
-            } else if (cur_pit == 6 && isPlayerA) { // for mancala A
+                take_out_stone--;
+            } else if (cur_pit == 6 && isPlayerA) {    //for mancala A
                 tmp_mancala = mancala.get(0);
                 mancala.set(0, tmp_mancala + 1);
-                out_stone--;
-            } else {
+                take_out_stone--;
+            } 
 
+            if(take_out_stone > 0){
                 // pits operation
-                final int cur_stone = pits.get(cur_pit);
+                int cur_stone = pits.get(cur_pit);
 
                 // Special operatation: (last stone to empty pits: get stone from oppenents)
-                if (out_stone == 1 && cur_stone == 0) {
+                if (take_out_stone == 1 && cur_stone == 0) {
                     if (cur_pit < 6 && isPlayerA) { // if in the playerA's side
                         tmp_mancala = mancala.get(0);
                         mancala.set(0, tmp_mancala + 1 + pits.get(11 - cur_pit));
@@ -117,22 +122,16 @@ public class GameManager {
                     }
                 }
                 // regular operation
-                if (cur_stone <= MAX_STONE_PER) {
+                if (cur_stone < MAX_STONE_PER) {
                     pits.set(cur_pit, cur_stone + 1);
-                    out_stone--;
+                    take_out_stone--;
+                    cur_pit = (cur_pit + 1) % TOTAL_PITS;   //cur_pit++
+                }else {
+                    cur_pit = (cur_pit + 1) % TOTAL_PITS;   //cur_pit++
                 }
             }
         }
 
-        // turn management:
-        if (cur_pit < 6 && isPlayerA) {
-            isPlayerA = true;
-        } else if (cur_pit > 5 && !isPlayerA) {
-            isPlayerA = false;
-        } else {
-            // reverse turn:
-            isPlayerA = reverseTurn();
-        }
     }
 
     private boolean reverseTurn() {
@@ -142,7 +141,7 @@ public class GameManager {
     }
 
     private void store_GameState() {
-        final GameState newState = new GameState();
+        GameState newState = new GameState();
         newState.set_gameRound(gameRound);
         newState.set_isGameOver(isGameOver);
         newState.set_isPlayerA(isPlayerA);
@@ -154,7 +153,7 @@ public class GameManager {
         game_states.add(newState);
     }
 
-    private void load_GameState(final int toWhich_gameRound) {
+    private void load_GameState(int toWhich_gameRound) {
         for (int i = game_states.size(); i >= 0; i--) {
             if (game_states.get(i).getGameRound() == toWhich_gameRound) {
                 break;
@@ -164,8 +163,18 @@ public class GameManager {
         }
     }
 
+    private void assign_state_toGame(GameState cur_state){
+        this.gameRound = cur_state.getGameRound();
+        this.isGameOver = cur_state.getIsGameOver();
+        this.isPlayerA = cur_state.getIsPlayerA();
+        this.mancala = cur_state.getMancala();
+        this.pits = cur_state.getPits();
+        this.stoneInPit = cur_state.getStoneInPit();
+    }
+
+
     public GameState load_current_GameState() {
-        final int index = game_states.size() - 1;
+        int index = game_states.size() - 1;
         return game_states.get(index);
     }
 
