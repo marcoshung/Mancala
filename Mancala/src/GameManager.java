@@ -179,10 +179,6 @@ public class GameManager {
     }
 
 
-
-
-
-
     //---------------------------------------
     // for test purpose:
     public ArrayList<GameState> get_StateList(){
