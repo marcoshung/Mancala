@@ -9,36 +9,32 @@ public class gameTester {
         game = new GameManager();
     
         //2. set stones per pit = 3
-        game.set_stoneInPit(3);
-     
+       /* game.set_stoneInPit(3);
 
-        //3. Player A picks A6
-      
         game.playGame(3);
+        game.playGame(4);
         game.playGame(6);
+        game.playGame(7);
+        game.playGame(5);
+        game.playGame(6);
+        game.playGame(0);
+        game.playGame(1);
+        game.playGame(2);
         game.playGame(3);
+        game.playGame(4);
+        game.playGame(6);
+        game.playGame(5);
+        */
+        //3. set stones per pit = 4
+        game.set_stoneInPit(4);
 
+        game.playGame(6);
+        game.playGame(5);
 
-        //4. Player B picks B1
-       // game.playGame(9);
         printGameState(game.get_StateList());
         printBoard(game.load_current_GameState());
   
 
-     /*   //5. reset game & Player B picks B6
-        game = new GameManager();
-        game.set_stoneInPit(3);     
-        game.playGame(11);
-
-        //printGameState(game.get_StateList());
-        //printBoard(game.load_current_GameState());
-        
-        //6. Player A picks A6
-    
-        printGameState(game.get_StateList());
-        printBoard(game.load_current_GameState());
-        
-*/
 
     }
 
