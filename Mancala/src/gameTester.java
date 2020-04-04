@@ -1,3 +1,9 @@
+/*
+    gameTester.java
+    Version 1.0
+    Last edit: Ari-03
+*/
+
 import java.util.ArrayList;
 
 public class gameTester {
