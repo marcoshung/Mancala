@@ -1,53 +1,45 @@
 /*
     gameTester.java
     Version 1.1
-    Last edit: Ari-05
+    Last edit: Ari-07
+    Showing the template of running the game.
 */
 
 import java.util.ArrayList;
 
 public class gameTester {
 
+
     public static void main(String[] args) {
         GameManager gameManager1;
         GameState init_game_state;
         GameState set_stone_state;
-        GameState diff_manager_state;
-        
+        GameState play_0_state;
+        GameState play_7_state;
+        GameState play_1_state;
+
+
         gameManager1 = new GameManager();
         init_game_state = gameManager1.load_current_GameState();
-
+        
         gameManager1.set_stoneInPit(init_game_state, 3);
         set_stone_state = gameManager1.load_current_GameState();
 
         gameManager1.playGame(set_stone_state, 0);
-        diff_manager_state = gameManager1.load_current_GameState();
+        play_0_state = gameManager1.load_current_GameState();
 
-        init_game_state.print_state();
-        set_stone_state.print_state();
-        diff_manager_state.print_state();
+        gameManager1.playGame(play_0_state, 7);
+        play_7_state = gameManager1.load_current_GameState();
 
+        gameManager1.playGame(play_7_state, 1);
+        play_1_state = gameManager1.load_current_GameState();
 
         
         printBoard(init_game_state);
         printBoard(set_stone_state);
-        printBoard(diff_manager_state);
-    
-
-
-
-
-
-
-
-        /*
-         printGameState(game_state);
-         printGameState(game_state1);
-         printGameState(game_state2);
-        */
-       
-        
-
+        printBoard(play_0_state);
+        printBoard(play_1_state);
+        printBoard(play_7_state);
 
 
     }

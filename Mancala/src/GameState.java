@@ -1,8 +1,8 @@
 /*
     GameState.java
     Version 1.1
-    Last edit: Ari-05
-    add: Boolean isInite
+    Last edit: Ari-07
+    add: Boolean isIniteState
 */
 import java.util.ArrayList;
 
@@ -44,9 +44,11 @@ public class GameState {
         this.gameRound = gameRound;
     }
     public void set_pits (ArrayList<Integer> pits){
+        this.pits = new ArrayList<Integer>();
         this.pits = pits;
     }
     public void set_mancala (ArrayList<Integer> mancala){
+        this.mancala = new ArrayList<Integer>();
         this.mancala = mancala;
     }
     public void set_cur_isPlayerA (Boolean cur_isPlayerA){
@@ -59,7 +61,7 @@ public class GameState {
         this.next_isPlayerA = next_isPlayerA;
     }
     public void set_state_id(int new_state_id){
-        state_id = new_state_id;
+        state_id += new_state_id;
     }
     public int getStoneInPit(){return stoneInPit;}
     public int getGameRound(){return gameRound;}
