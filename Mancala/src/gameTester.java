@@ -1,7 +1,7 @@
 /*
     gameTester.java
-    Version 1.0
-    Last edit: Ari-03
+    Version 1.1
+    Last edit: Ari-05
 */
 
 import java.util.ArrayList;
@@ -9,50 +9,57 @@ import java.util.ArrayList;
 public class gameTester {
 
     public static void main(String[] args) {
-        GameManager game;
-   
-        //1. start a new game:
-        game = new GameManager();
+        GameManager gameManager1;
+        GameState init_game_state;
+        GameState set_stone_state;
+        GameState diff_manager_state;
+        
+        gameManager1 = new GameManager();
+        init_game_state = gameManager1.load_current_GameState();
+
+        gameManager1.set_stoneInPit(init_game_state, 3);
+        set_stone_state = gameManager1.load_current_GameState();
+
+        gameManager1.playGame(set_stone_state, 0);
+        diff_manager_state = gameManager1.load_current_GameState();
+
+        init_game_state.print_state();
+        set_stone_state.print_state();
+        diff_manager_state.print_state();
+
+
+        
+        printBoard(init_game_state);
+        printBoard(set_stone_state);
+        printBoard(diff_manager_state);
     
-        //2. set stones per pit = 3
-       /* game.set_stoneInPit(3);
 
-        game.playGame(3);
-        game.playGame(4);
-        game.playGame(6);
-        game.playGame(7);
-        game.playGame(5);
-        game.playGame(6);
-        game.playGame(0);
-        game.playGame(1);
-        game.playGame(2);
-        game.playGame(3);
-        game.playGame(4);
-        game.playGame(6);
-        game.playGame(5);
+
+
+
+
+
+
+        /*
+         printGameState(game_state);
+         printGameState(game_state1);
+         printGameState(game_state2);
         */
-        //3. set stones per pit = 4
-        game.set_stoneInPit(4);
+       
+        
 
-        game.playGame(6);
-        game.playGame(5);
-
-        printGameState(game.get_StateList());
-        printBoard(game.load_current_GameState());
-  
 
 
     }
 
-    public static void printGameState(ArrayList<GameState> thisList){
+    public static void printGameState(GameState state){
         //Title:
-        System.out.printf("\n\n%-10s %-10s %-15s %-10s %s\n", "In List", "gameRound", "cur_isPlayerA", "next_isPlayerA", "isGameOver");
+        System.out.printf("\n\n%-10s %-15s %-10s %-10s %s\n", "gameRound", "cur_isPlayerA", "next_isPlayerA", "isGameOver","init_state isAble_to_load");
 
         //For Each List:
-        for(int i=0; i<thisList.size(); i++){
-            GameState state = thisList.get(i);
-            System.out.printf("%-10s %-10s %-15s %-15s %s\n\n",i , state.getGameRound(), state.get_cur_isPlayerA(), state.get_next_isPlayerA(),state.getIsGameOver());
-        }
+        
+        System.out.printf("%-10s %-15s %-15s %-10s %s\n\n" , state.getGameRound(), state.get_cur_isPlayerA(), state.get_next_isPlayerA(),state.getIsGameOver(),state.isAble_to_load());
+        
     }
 
     public static void printBoard(GameState state){
@@ -76,7 +83,5 @@ public class gameTester {
         System.out.printf("%-2s\n\n\n", "");
 
     }
-
-
 
 }

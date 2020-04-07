@@ -1,13 +1,16 @@
+
 /*
     GameManager.java
-    Version 1.0
-    Last edit: Ari-03
+    Version 1.1
+    Last edit: Ari-05
 */
 import java.util.ArrayList;
 
 public class GameManager {
 
-    private final ArrayList<GameState> game_states;
+
+    private GameState init_state;
+    private GameState load_this_state;
 
     private int stoneInPit;
     private int gameRound;
@@ -24,27 +27,34 @@ public class GameManager {
 
     // constructure
     public GameManager() {
-
-        game_states = new ArrayList<GameState>();
+        init_state = new GameState();
+        assign_state_toGame(init_state);
         init_Game();
-        store_GameState();
+        init_state.able_to_load(true);
+        store_GameState(init_state);
         System.out.println("GameManager->GameManager(): " + "construct game");
     }
 
     // get user's order to set initial stones per pit
-    public void set_stoneInPit(int stoneInPit) {
+    public void set_stoneInPit(GameState state, int stoneInPit) {
+        assign_state_toGame(state);
         this.stoneInPit = stoneInPit;
         init_Game();
-        store_GameState();
-        System.out.println("GameManager->set_stoneInPit: "+"set stone per pit: "+stoneInPit);
+        init_state.able_to_load(false);
+
+        GameState new_state;
+        new_state = new GameState();
+        new_state.set_state_id(1);
+        store_GameState(new_state);
+        System.out.println("GameManager->set_stoneInPit: " + "set stone per pit: " + stoneInPit);
     }
 
     // play game interface
-    public void playGame(int n_pit) {
-        
-        System.out.println("GameManager->playGame:------------------------START playGame "+"at "+n_pit);
+    public void playGame(GameState cur_state, int n_pit) {
+
+        System.out.println("GameManager->playGame:------------------------START playGame " + "at " + n_pit);
         // load data from the latest state to GameManager
-        assign_state_toGame(load_current_GameState());
+        assign_state_toGame(cur_state);
 
         // run game base on the data
         isAvaliableRound = run_Game(n_pit);
@@ -53,7 +63,10 @@ public class GameManager {
         if_process_GameOver();
 
         // store data to a new state
-        store_GameState();
+        GameState new_state;
+        new_state = new GameState();
+        new_state.set_state_id(2);
+        store_GameState(new_state);
 
     }
 
@@ -81,20 +94,19 @@ public class GameManager {
 
     // core method for running game
     private boolean run_Game(int n_pit) {
-        
+
         gameRound++;
 
-        System.out.println("------------------------------------------------GameRound: "+gameRound+" STARTS");
+        System.out.println("------------------------------------------------GameRound: " + gameRound + " STARTS");
 
         int take_out_stone;
         int cur_pit = n_pit;
-        
 
         // init turn(at very first round);
         // check turn
         // check stone(>0) in selected pit
         if (!check_game_avalibility(n_pit) || isGameOver) {
-            System.out.println("GameManager->run_Game: "+ "at" + n_pit +" => FALSE");
+            System.out.println("GameManager->run_Game: " + "at" + n_pit + " => FALSE");
             System.out.println("Err: check_game_avaliablity || isGameOver ");
             return false;
         }
@@ -133,7 +145,7 @@ public class GameManager {
             }
 
         }
-        System.out.println("GameManager->run_Game: "+"at "+n_pit+" => Success");
+        System.out.println("GameManager->run_Game: " + "at " + n_pit + " => Success");
         return true;
     }
 
@@ -174,21 +186,21 @@ public class GameManager {
     private int check_for_mancalaCase(int cur_pit, int take_out_stone) {
         int add_to_mancala;
         if (cur_pit == 0 && !cur_isPlayerA) {
-            System.out.println("GameManager->check_for_mancalaCase: "+"because meet Mancala B");
+            System.out.println("GameManager->check_for_mancalaCase: " + "because meet Mancala B");
             add_to_mancala = mancala.get(1); // for mancala B
             mancala.set(1, add_to_mancala + 1);
             take_out_stone--;
             if (take_out_stone == 0) {
-                System.out.println("GameManager->check_for_mancalaCase: "+"Player B gets free turn");
+                System.out.println("GameManager->check_for_mancalaCase: " + "Player B gets free turn");
                 next_isPlayerA = cur_isPlayerA; // Special cases1 (B keep play): last drop is your own Mancala
             }
         } else if (cur_pit == 6 && cur_isPlayerA) { // for mancala A
-            System.out.println("GameManager->check_for_mancalaCase: "+"because meet Mancala A");
+            System.out.println("GameManager->check_for_mancalaCase: " + "because meet Mancala A");
             add_to_mancala = mancala.get(0);
             mancala.set(0, add_to_mancala + 1);
             take_out_stone--;
             if (take_out_stone == 0) {
-                System.out.println("GameManager->check_for_mancalaCase: "+"Player A gets free turn");
+                System.out.println("GameManager->check_for_mancalaCase: " + "Player A gets free turn");
                 next_isPlayerA = cur_isPlayerA; // Special cases1 (A keep play): last drop is your own Mancala
             }
         }
@@ -207,8 +219,8 @@ public class GameManager {
 
             int add_to_mancala;
             if (cur_isPlayerA == true && cur_pit <= 5) { // if it ends in A's side
-            System.out.println("GameManager->check_for_specialCase2: "+"because take_out_stone = "+ take_out_stone
-            + " and stone in cur_pit = "+pits.get(cur_pit));
+                System.out.println("GameManager->check_for_specialCase2: " + "because take_out_stone = "
+                        + take_out_stone + " and stone in cur_pit = " + pits.get(cur_pit));
 
                 add_to_mancala = mancala.get(0);
                 add_to_mancala += pits.get(11 - cur_pit) + 1;
@@ -218,8 +230,8 @@ public class GameManager {
                 next_isPlayerA = false; // next round will be B's turn
 
             } else if (cur_isPlayerA == false && cur_pit > 5) { // if it ends in B's side
-            System.out.println("GameManager->check_for_specialCase2: "+"because take_out_stone = "+ take_out_stone
-            + " and stone in cur_pit = "+pits.get(cur_pit));
+                System.out.println("GameManager->check_for_specialCase2: " + "because take_out_stone = "
+                        + take_out_stone + " and stone in cur_pit = " + pits.get(cur_pit));
 
                 add_to_mancala = mancala.get(1);
                 add_to_mancala += pits.get(11 - cur_pit) + 1;
@@ -233,53 +245,41 @@ public class GameManager {
         return take_out_stone;
     }
 
-    // if run_game executed successfully, store it into game_state array
-    private void store_GameState() {
-        if (isAvaliableRound) {
-            GameState newState = new GameState();
-            newState.set_gameRound(gameRound);
-            newState.set_isGameOver(isGameOver);
-            newState.set_cur_isPlayerA(cur_isPlayerA);
-            newState.set_next_isPlayerA(next_isPlayerA);
-            newState.set_mancala(mancala);
-            newState.set_pits(pits);
-            newState.set_stoneInPit(stoneInPit);
-
-            // add to "state array"
-            game_states.add(newState);
-            System.out.println("GameManager->store_GameState at list: " + (game_states.size() - 1));
-            System.out.println("------------------------------------------------GameRound: "+gameRound+" ENDS\n\n");
-        }
-
-    }
-
-    // load game state from paticular round. To be useful for undo function
-    private void load_GameState(int toWhich_gameRound) {
-        for (int i = game_states.size(); i >= 0; i--) {
-            if (game_states.get(i).getGameRound() == toWhich_gameRound) {
-                break;
-            } else {
-                game_states.remove(i);
-            }
-        }
-    }
-
-    // the game read data from the game_state array
-    private void assign_state_toGame(GameState cur_state) {
-        this.gameRound = cur_state.getGameRound();
-        this.isGameOver = cur_state.getIsGameOver();
-        this.cur_isPlayerA = cur_state.get_cur_isPlayerA();
-        this.next_isPlayerA = cur_state.get_next_isPlayerA();
-        this.mancala = cur_state.getMancala();
-        this.pits = cur_state.getPits();
-        this.stoneInPit = cur_state.getStoneInPit();
+     // the game read data from the game_state array
+     private void assign_state_toGame(GameState cur_state) {
+        gameRound = cur_state.getGameRound();
+        isGameOver = cur_state.getIsGameOver();
+        cur_isPlayerA = cur_state.get_cur_isPlayerA();
+        next_isPlayerA = cur_state.get_next_isPlayerA();
+        mancala = cur_state.getMancala();
+        pits = cur_state.getPits();
+        stoneInPit = cur_state.getStoneInPit();
         System.out.println("GameManager->assign_state_toGame...");
     }
 
+    // if run_game executed successfully, store it into game_state array
+    private void store_GameState(GameState new_state) {
+        if (isAvaliableRound) {
+            
+            new_state.set_gameRound(gameRound);
+            new_state.set_isGameOver(isGameOver);
+            new_state.set_cur_isPlayerA(cur_isPlayerA);
+            new_state.set_next_isPlayerA(next_isPlayerA);
+            new_state.set_mancala(mancala);
+            new_state.set_pits(pits);
+            new_state.set_stoneInPit(stoneInPit);
+            load_this_state = new_state;
+        }
+    }
+
+   
     // return the latest GameState ==> for BoardView usage.
     public GameState load_current_GameState() {
-        int index = game_states.size() - 1;
-        return game_states.get(index);
+        if(init_state.isAble_to_load()){
+            return init_state;
+        }else{
+            return load_this_state;
+        }
     }
 
     // check if isGameOver, and add macala
@@ -299,20 +299,15 @@ public class GameManager {
             isGameOver = true;
             temp_mancala = mancala.get(1);
             mancala.set(1, temp_mancala + stones_in_playerB);
-            System.out.println("GameManager->if_process_GameOver: Proceed.  With isGameOver = " + isGameOver );
+            System.out.println("GameManager->if_process_GameOver: Proceed.  With isGameOver = " + isGameOver);
         } else if (stones_in_playerB == 0) {
             isGameOver = true;
             temp_mancala = mancala.get(0);
             mancala.set(0, temp_mancala + stones_in_playerA);
-            System.out.println("GameManager->if_process_GameOver: Proceed.  With isGameOver = " + isGameOver );
+            System.out.println("GameManager->if_process_GameOver: Proceed.  With isGameOver = " + isGameOver);
         }
 
     }
 
-    // ---------------------------------------
-    // for test purpose:
-    public ArrayList<GameState> get_StateList() {
-        return game_states;
-    }
-
+ 
 }
