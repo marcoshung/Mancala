@@ -8,10 +8,13 @@ public class BoardModel {
 	
 	private Stack<GameState> history;
 	private ArrayList<ChangeListener> listeners;
-	
+	private GameManager gameManager;
+	private final int INTIAL_MARBLES_IN_PITS = 3;
 	public BoardModel() {
 		history = new Stack<GameState>();
 		listeners = new ArrayList<ChangeListener>();
+		gameManager = new GameManager();
+		gameManager.set_stoneInPit(gameManager.load_current_GameState(), INTIAL_MARBLES_IN_PITS);
 	}
 	
 	public void attach(ChangeListener c) {
@@ -31,17 +34,7 @@ public class BoardModel {
 			pitLocation += 6;
 		}
 		
-		ArrayList<Integer> currentState = getState().getPits();
-		int marbles = currentState.get(pitLocation);
-		currentState.set(pitLocation, 0);
-		int position = pitLocation + 1;
-		for(int i = 0; i < marbles; i++) {
-			if(position > 12) {
-				position = 0;
-			}
-			currentState.set(position, currentState.get(position) + 1);
-			position++;
-		}
+		gameManager.set_stoneInPit(gameManager.load_current_GameState(), 1);
 		
 		for(ChangeListener l : this.listeners) {
 			l.stateChanged(new ChangeEvent(this));
@@ -50,6 +43,8 @@ public class BoardModel {
 	
 	public void undo() {
 		history.pop();
+		GameState prevState = history.peek();
+		gameManager.set_stoneInPit(prevState, 0);
 	}
 	
 }
