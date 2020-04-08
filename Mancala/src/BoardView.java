@@ -10,17 +10,12 @@ import java.util.Random;
 public class BoardView extends JPanel implements ChangeListener{
     private BoardStyle boardStyle;
     private ArrayList<Integer> pits;
-
-
-
-    @Override
-    public Dimension getPreferredSize() {
-        return boardStyle.preferredLayoutSize(this);
-    }
+    private final int WIDTH = 600;
+    private final int HEIGHT = 200;
 
     public BoardView(BoardStyle boardStyle){
         this.boardStyle = boardStyle;
-        setLayout(boardStyle);
+        setLayout(new BorderLayout());
     }
 
     public void setBoardStyle(BoardStyle boardStyle){
@@ -41,7 +36,7 @@ public class BoardView extends JPanel implements ChangeListener{
             @Override
             public void mouseClicked(MouseEvent e) {
                 //Model.update()
-                System.out.println("dataModel.update(gameState)"+((JLabel)e.getSource()).getText());
+                System.out.println(((JLabel)e.getSource()).getText());
             }
             public void mousePressed(MouseEvent e) {}
             public void mouseReleased(MouseEvent e) {}
@@ -68,5 +63,15 @@ public class BoardView extends JPanel implements ChangeListener{
     public void stateChanged(ChangeEvent e) {
         //pits = model.getState.getPits();
         repaint();
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(WIDTH,HEIGHT);
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+        return getPreferredSize();
     }
 }

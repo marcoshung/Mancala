@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Extends layout manager to create the layout of the board
  */
 
-public interface BoardStyle extends LayoutManager{
+public interface BoardStyle {
    public JLabel drawLabel(String string);
    public JPanel drawPits(Graphics g, ArrayList<Integer> pits, MouseListener listener);
    public JPanel drawMancalas(Graphics g, ArrayList<Integer> mancalas);

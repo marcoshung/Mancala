@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.Comparator;
 
 /**
  * Mancala program by the IMaX team, CS151 Team Project
@@ -8,11 +9,11 @@ import java.awt.*;
 
 
 public class MancalaTester {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         // Main menu
         JFrame mainWindow = new JFrame("Welcome to IMaX Mancala");
         JPanel mainMenu = new JPanel();
-        mainMenu.setPreferredSize(new Dimension(640,480));
+        mainMenu.setPreferredSize(new Dimension(640, 480));
         mainWindow.add(mainMenu);
         mainWindow.pack();
 
@@ -22,7 +23,7 @@ public class MancalaTester {
 
         // Game window
         JFrame gameWindow = new JFrame("Game Window");
-        BoardView boardView = new BoardView(new StandardStyle(640,380));
+        BoardView boardView = new BoardView(new StandardStyle(640, 380));
         gameWindow.add(boardView);
 
         gameWindow.setVisible(true);
