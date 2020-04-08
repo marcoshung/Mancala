@@ -15,6 +15,7 @@ public class BoardModel {
 		listeners = new ArrayList<ChangeListener>();
 		gameManager = new GameManager();
 		gameManager.set_stoneInPit(gameManager.load_current_GameState(), INTIAL_MARBLES_IN_PITS);
+		history.push(gameManager.load_current_GameState());
 	}
 	
 	public void attach(ChangeListener c) {
@@ -27,15 +28,15 @@ public class BoardModel {
 	
 	public void update(String cell) {
 		char player = cell.charAt(0);
-		int pitNum = cell.charAt(1);
+		int pitNum = Integer.parseInt(cell.substring(1));
 		
 		int pitLocation = pitNum - 1;
 		if(player == 'b' || player == 'B'){
 			pitLocation += 6;
 		}
 		
-		gameManager.set_stoneInPit(gameManager.load_current_GameState(), 1);
-		
+		gameManager.playGame(gameManager.load_current_GameState(), pitLocation);
+		history.push(gameManager.load_current_GameState());
 		for(ChangeListener l : this.listeners) {
 			l.stateChanged(new ChangeEvent(this));
 		}
@@ -47,4 +48,11 @@ public class BoardModel {
 		gameManager.set_stoneInPit(prevState, 0);
 	}
 	
+	public GameManager getGameManager() {
+		return this.gameManager;
+	}
+	
+	public GameState getCurrentState() {
+		return history.peek();
+	}
 }
