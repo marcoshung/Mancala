@@ -42,6 +42,7 @@ public class gameTester {
         printBoard(play_7_state);
 		*/
         
+        //BoardModel Tester
         BoardModel bm = new BoardModel();
         init_game_state = bm.getCurrentState();
         printBoard(init_game_state);
