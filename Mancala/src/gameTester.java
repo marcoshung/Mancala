@@ -18,7 +18,7 @@ public class gameTester {
         GameState play_7_state;
         GameState play_1_state;
 
-
+        /*
         gameManager1 = new GameManager();
         init_game_state = gameManager1.load_current_GameState();
         
@@ -40,8 +40,20 @@ public class gameTester {
         printBoard(play_0_state);
         printBoard(play_1_state);
         printBoard(play_7_state);
-
-
+		*/
+        
+        //BoardModel Tester
+        BoardModel bm = new BoardModel();
+        init_game_state = bm.getCurrentState();
+        printBoard(init_game_state);
+        
+        bm.update("a1");
+        set_stone_state = bm.getCurrentState();
+        printBoard(set_stone_state);
+        
+        bm.update("b1");
+        set_stone_state = bm.getCurrentState();
+        printBoard(set_stone_state);
     }
 
     public static void printGameState(GameState state){
