@@ -27,6 +27,7 @@ public class BoardModel {
 	}
 	
 	public void update(String cell) {
+		GameState currentState = history.peek();
 		char player = cell.charAt(0);
 		int pitNum = Integer.parseInt(cell.substring(1));
 		
