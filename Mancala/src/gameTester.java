@@ -1,52 +1,69 @@
+/*
+    gameTester.java
+    Version 1.1
+    Last edit: Ari-07
+    Showing the template of running the game.
+*/
+
 import java.util.ArrayList;
 
 public class gameTester {
 
+
     public static void main(String[] args) {
-        GameManager game;
-   
-        //1. start a new game:
-        game = new GameManager();
-    
-        //2. set stones per pit = 3
-       /* game.set_stoneInPit(3);
+        GameManager gameManager1;
+        GameState init_game_state;
+        GameState set_stone_state;
+        GameState play_0_state;
+        GameState play_7_state;
+        GameState play_1_state;
 
-        game.playGame(3);
-        game.playGame(4);
-        game.playGame(6);
-        game.playGame(7);
-        game.playGame(5);
-        game.playGame(6);
-        game.playGame(0);
-        game.playGame(1);
-        game.playGame(2);
-        game.playGame(3);
-        game.playGame(4);
-        game.playGame(6);
-        game.playGame(5);
-        */
-        //3. set stones per pit = 4
-        game.set_stoneInPit(4);
+        /*
+        gameManager1 = new GameManager();
+        init_game_state = gameManager1.load_current_GameState();
+        
+        gameManager1.set_stoneInPit(init_game_state, 3);
+        set_stone_state = gameManager1.load_current_GameState();
 
-        game.playGame(6);
-        game.playGame(5);
+        gameManager1.playGame(set_stone_state, 0);
+        play_0_state = gameManager1.load_current_GameState();
 
-        printGameState(game.get_StateList());
-        printBoard(game.load_current_GameState());
-  
+        gameManager1.playGame(play_0_state, 7);
+        play_7_state = gameManager1.load_current_GameState();
 
+        gameManager1.playGame(play_7_state, 1);
+        play_1_state = gameManager1.load_current_GameState();
 
+        
+        printBoard(init_game_state);
+        printBoard(set_stone_state);
+        printBoard(play_0_state);
+        printBoard(play_1_state);
+        printBoard(play_7_state);
+		*/
+        
+        //BoardModel Tester
+        BoardModel bm = new BoardModel();
+        init_game_state = bm.getCurrentState();
+        printBoard(init_game_state);
+        
+        bm.update("a1");
+        set_stone_state = bm.getCurrentState();
+        printBoard(set_stone_state);
+        
+        bm.update("b1");
+        set_stone_state = bm.getCurrentState();
+        printBoard(set_stone_state);
     }
 
-    public static void printGameState(ArrayList<GameState> thisList){
+    public static void printGameState(GameState state){
         //Title:
-        System.out.printf("\n\n%-10s %-10s %-15s %-10s %s\n", "In List", "gameRound", "cur_isPlayerA", "next_isPlayerA", "isGameOver");
+        System.out.printf("\n\n%-10s %-15s %-10s %-10s %s\n", "gameRound", "cur_isPlayerA", "next_isPlayerA", "isGameOver","init_state isAble_to_load");
 
         //For Each List:
-        for(int i=0; i<thisList.size(); i++){
-            GameState state = thisList.get(i);
-            System.out.printf("%-10s %-10s %-15s %-15s %s\n\n",i , state.getGameRound(), state.get_cur_isPlayerA(), state.get_next_isPlayerA(),state.getIsGameOver());
-        }
+        
+        System.out.printf("%-10s %-15s %-15s %-10s %s\n\n" , state.getGameRound(), state.get_cur_isPlayerA(), state.get_next_isPlayerA(),state.getIsGameOver(),state.isAble_to_load());
+        
     }
 
     public static void printBoard(GameState state){
@@ -70,7 +87,5 @@ public class gameTester {
         System.out.printf("%-2s\n\n\n", "");
 
     }
-
-
 
 }
