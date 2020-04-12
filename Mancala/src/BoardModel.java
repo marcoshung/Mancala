@@ -28,6 +28,8 @@ public class BoardModel {
 	
 	public void update(String cell) {
 		GameState currentState = history.peek();
+		boolean isPlayerA = currentState.get_next_isPlayerA();
+		
 		char player = cell.charAt(0);
 		int pitNum = Integer.parseInt(cell.substring(1));
 		
@@ -36,6 +38,14 @@ public class BoardModel {
 			pitLocation += 6;
 		}
 		
+		if(isPlayerA && pitLocation >= 6) {
+			System.out.println("Not your turn. It is player A's turn");
+			return;
+		}
+		if(!isPlayerA && pitLocation <= 5) {
+			System.out.println("Not your turn. It is player B's turn");
+			return;
+		}
 		gameManager.playGame(gameManager.load_current_GameState(), pitLocation);
 		history.push(gameManager.load_current_GameState());
 		for(ChangeListener l : this.listeners) {
