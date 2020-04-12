@@ -28,7 +28,7 @@ public class BoardModel {
 	
 	public void update(String cell) {
 		GameState currentState = history.peek();
-		boolean isPlayerA = currentState.get_cur_isPlayerA();
+		boolean isPlayerA = currentState.get_next_isPlayerA();
 		
 		char player = cell.charAt(0);
 		int pitNum = Integer.parseInt(cell.substring(1));
