@@ -1,9 +1,9 @@
 
 /*
     GameManager.java
-    Version 1.10
-    Last edit: Ari-10
-    
+    Version 1.14
+    Last edit: Ari-14
+    bug fixed: if cur pit is empty.
 */
 import java.util.ArrayList;
 
@@ -22,6 +22,7 @@ public class GameManager {
     private ArrayList<Integer> pits;
     private ArrayList<Integer> mancala;
 
+
     private final static int TOTAL_PITS = 12;
     private final static int TOTAL_MANCALA = 2;
     private final static int MAX_STONE_PER = 4;
@@ -29,7 +30,7 @@ public class GameManager {
     // constructure
     public GameManager() {
         init_state = new GameState();
-        // assign_state_toGame(init_state);
+        //assign_state_toGame(init_state);
         init_Game();
         init_state.able_to_load(true);
         store_GameState_to(init_state);
@@ -38,7 +39,7 @@ public class GameManager {
 
     // get user's order to set initial stones per pit
     public void set_stoneInPit(GameState the_init_state, int stoneInPit) {
-
+        
         assign_state_toGame(the_init_state);
 
         this.stoneInPit = stoneInPit;
@@ -109,6 +110,13 @@ public class GameManager {
             System.out.println("Err: check_game_avaliablity || isGameOver ");
             return false;
         }
+
+        // if the cur_pit is empty:
+        if(pits.get(cur_pit) == 0){
+            System.out.println("run_game error: this pit is empty");
+            return false;
+        }
+
 
         // reset the current pit
         take_out_stone = pits.get(cur_pit);
@@ -244,29 +252,30 @@ public class GameManager {
         return take_out_stone;
     }
 
-    // the game read data from the game_state array
-    private void assign_state_toGame(GameState cur_state) {
+     // the game read data from the game_state array
+     private void assign_state_toGame(GameState cur_state) {
         gameRound = cur_state.getGameRound();
         isGameOver = cur_state.getIsGameOver();
         cur_isPlayerA = cur_state.get_cur_isPlayerA();
         next_isPlayerA = cur_state.get_next_isPlayerA();
-
+       
         mancala = new ArrayList<Integer>();
         ArrayList<Integer> oldMancala = cur_state.getMancala();
-        for (int i = 0; i < oldMancala.size(); i++) {
+        for(int i=0; i<oldMancala.size(); i++){
             mancala.add(oldMancala.get(i));
         }
 
         // set new fucking pits......
         pits = new ArrayList<Integer>();
         ArrayList<Integer> oldPits = cur_state.getPits();
-        for (int i = 0; i < oldPits.size(); i++) {
-            pits.add(oldPits.get(i));
+        for(int i=0; i<oldPits.size(); i++){
+            pits.add(oldPits.get(i));   
         }
-
+                
         stoneInPit = cur_state.getStoneInPit();
         System.out.println("GameManager->assign_state_toGame...");
     }
+
 
     // if run_game executed successfully, store it into game_state array
     private void store_GameState_to(GameState new_state) {
@@ -276,17 +285,22 @@ public class GameManager {
             new_state.set_isGameOver(isGameOver);
             new_state.set_cur_isPlayerA(cur_isPlayerA);
             new_state.set_next_isPlayerA(next_isPlayerA);
+            
             new_state.set_mancala(mancala);
             new_state.set_pits(pits);
+
             new_state.set_stoneInPit(stoneInPit);
+            new_state.set_state_status(1);
+            
         }
     }
 
+   
     // return the latest GameState ==> for BoardView usage.
     public GameState load_current_GameState() {
-        if (init_state.isAble_to_load()) {
+        if(init_state.isAble_to_load()){
             return init_state;
-        } else {
+        }else{
             return load_this_state;
         }
     }
@@ -318,4 +332,5 @@ public class GameManager {
 
     }
 
+ 
 }

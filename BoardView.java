@@ -5,43 +5,46 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Random;
 
-public class BoardView extends JPanel implements ChangeListener{
-    private BoardStyle boardStyle;
+public class BoardView extends JFrame implements ChangeListener{
     private ArrayList<Integer> pits;
+    private int width;
+    private int height;
+    private JPanel pitsPanel, leftMancalaPanel,rightMancalaPanel;
+    private JLabel labelPlayerA, labelPlayerB;
+    private BoardModel boardModel;
+    private BoardStyle boardStyle;
 
+    public BoardView(BoardModel boardModel){
+        this.boardModel = boardModel;
+        boardModel.attach(this);
+        setLayout(new BorderLayout());
+        setTitle("Mancala Board");
+        setLocation(200,200);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        pitsPanel = new JPanel();
+        leftMancalaPanel = new JPanel();
+        rightMancalaPanel = new JPanel();
+        labelPlayerA = new JLabel("Player A ->", JLabel.CENTER);
+        labelPlayerB = new JLabel("<- Player B", JLabel.CENTER);
 
-    @Override
-    public Dimension getPreferredSize() {
-        return boardStyle.preferredLayoutSize(this);
+        add(labelPlayerB, BorderLayout.NORTH);
+        add(leftMancalaPanel, BorderLayout.WEST);
+        add(pitsPanel, BorderLayout.CENTER);
+        add(rightMancalaPanel, BorderLayout.EAST);
+        add(labelPlayerA, BorderLayout.SOUTH);
     }
 
-    public BoardView(BoardStyle boardStyle){
+
+    public void setStyle(BoardStyle boardStyle){
         this.boardStyle = boardStyle;
-        setLayout(boardStyle);
-    }
-
-    public void setBoardStyle(BoardStyle boardStyle){
-        this.boardStyle = boardStyle;
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-
-        Random random = new Random();
-        pits = new ArrayList<>();
-        for (int i = 0; i < 12; i++){
-            pits.add(random.nextInt(7));
-        }
-
-
+        this.width = boardStyle.getWidth();
+        this.height = boardStyle.getHeight();
         MouseListener mouseListener = new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                //Model.update()
-                System.out.println("dataModel.update(gameState)"+((JLabel)e.getSource()).getText());
+                boardModel.update(((JLabel) e.getSource()).getText());
             }
             public void mousePressed(MouseEvent e) {}
             public void mouseReleased(MouseEvent e) {}
@@ -49,24 +52,25 @@ public class BoardView extends JPanel implements ChangeListener{
             public void mouseExited(MouseEvent e) {}
         };
 
-        add(boardStyle.drawLabel("Player B"), BorderLayout.NORTH);
+        boardStyle.layoutStyle(getContentPane(), boardModel ,mouseListener);
 
-        add(boardStyle.drawPits(g, pits, mouseListener), BorderLayout.CENTER);
-
-        add(boardStyle.drawMancalas(g,null), BorderLayout.WEST);
-
-        add(boardStyle.drawMancalas(g,null), BorderLayout.EAST);
-
-        add(boardStyle.drawLabel("Player A"), BorderLayout.SOUTH);
+        pack();
+        setVisible(true);
     }
 
-    /**
-     * Invoked when the target of the listener has changed its state.
-     * @param e a ChangeEvent object
-     */
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(width, height);
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+        return getPreferredSize();
+    }
+
     @Override
     public void stateChanged(ChangeEvent e) {
-        //pits = model.getState.getPits();
         repaint();
+        boardStyle.markCurrentPlayer();
     }
 }
