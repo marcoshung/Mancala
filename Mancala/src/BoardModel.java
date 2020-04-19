@@ -1,3 +1,10 @@
+/**
+ * BoardModel.java
+ * Version 1.14
+ * bug fixed: if cur pit is empty by adding an if statement 
+ * 
+*/
+
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -37,7 +44,6 @@ public class BoardModel {
 		if(player == 'b' || player == 'B'){
 			pitLocation += 6;
 		}
-		
 		if(isPlayerA && pitLocation >= 6) {
 			System.out.println("Not your turn. It is player A's turn");
 			return;
@@ -46,8 +52,16 @@ public class BoardModel {
 			System.out.println("Not your turn. It is player B's turn");
 			return;
 		}
-		gameManager.playGame(gameManager.load_current_GameState(), pitLocation);
-		history.push(gameManager.load_current_GameState());
+
+		// snow's editing
+		gameManager.playGame(getCurrentState(), pitLocation);
+		
+		GameState toBePushedState = gameManager.load_current_GameState();
+		if (toBePushedState.get_state_status() == 1){
+			history.push(toBePushedState);
+		}
+		// snow's editing done
+
 		for(ChangeListener l : this.listeners) {
 			l.stateChanged(new ChangeEvent(this));
 		}

@@ -1,10 +1,9 @@
 
 /*
     GameManager.java
-    Version 1.1
-    Last edit: Ari-07
-    change GameState working condition.
-    to: input state => process => output state
+    Version 1.14
+    Last edit: Ari-14
+    bug fixed: if cur pit is empty.
 */
 import java.util.ArrayList;
 
@@ -111,6 +110,13 @@ public class GameManager {
             System.out.println("Err: check_game_avaliablity || isGameOver ");
             return false;
         }
+
+        // if the cur_pit is empty:
+        if(pits.get(cur_pit) == 0){
+            System.out.println("run_game error: this pit is empty");
+            return false;
+        }
+
 
         // reset the current pit
         take_out_stone = pits.get(cur_pit);
@@ -284,7 +290,7 @@ public class GameManager {
             new_state.set_pits(pits);
 
             new_state.set_stoneInPit(stoneInPit);
-            new_state.set_state_id(1);
+            new_state.set_state_status(1);
             
         }
     }

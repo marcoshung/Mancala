@@ -9,8 +9,8 @@ import java.util.ArrayList;
  */
 
 public interface BoardStyle {
-   public JLabel drawLabel(String string);
-   public JPanel drawPits(Graphics g, ArrayList<Integer> pits, MouseListener listener);
-   public JPanel drawMancalas(Graphics g, ArrayList<Integer> mancalas);
-
+   public void layoutStyle(Container container, BoardModel boardModel, MouseListener mouseListener);
+   public void markCurrentPlayer();
+   public int getWidth();
+   public int getHeight();
 }
