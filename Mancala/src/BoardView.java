@@ -1,42 +1,76 @@
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Random;
 
-public class BoardView extends JPanel implements ChangeListener{
-    private BoardStyle boardStyle;
+public class BoardView extends JFrame implements ChangeListener{
+    public static final boolean RESIZABLE = false;
+    private static final int UNDO_BUTTON_SPACING = 100;
+    private static final int SCREEN_LOCATION = 200;
     private ArrayList<Integer> pits;
-    private final int WIDTH = 600;
-    private final int HEIGHT = 200;
+    private int width;
+    private int height;
+    private JPanel pitsPanel, leftMancalaPanel,rightMancalaPanel;
+    private JLabel labelPlayerA, labelPlayerB;
+    private BoardModel boardModel;
+    private BoardStyle boardStyle;
+    private JPanel mainPanel;
 
-    public BoardView(BoardStyle boardStyle){
-        this.boardStyle = boardStyle;
+    public BoardView(BoardModel boardModel){
+        this.boardModel = boardModel;
         setLayout(new BorderLayout());
+        mainPanel = new JPanel(new BorderLayout());
+        boardModel.attach(this);
+        setTitle("Mancala Board");
+        setLocation(SCREEN_LOCATION,SCREEN_LOCATION);
+        setResizable(RESIZABLE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        add(mainPanel, BorderLayout.NORTH);
+
+        pitsPanel = new JPanel();
+        leftMancalaPanel = new JPanel();
+        rightMancalaPanel = new JPanel();
+        labelPlayerA = new JLabel("Player A ->", JLabel.CENTER);
+        labelPlayerB = new JLabel("<- Player B", JLabel.CENTER);
+
+        JPanel bottomPanel = new JPanel();
+        JButton undoButton = new JButton("UNDO");
+        undoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boardModel.undo();
+                repaint();
+                boardStyle.markCurrentPlayer();
+            }
+        });
+
+        undoButton.setBounds(300, 300, 60, 20);
+        bottomPanel.add(undoButton);
+        add(bottomPanel, BorderLayout.SOUTH);
+
+        mainPanel.add(labelPlayerB, BorderLayout.NORTH);
+        mainPanel.add(leftMancalaPanel, BorderLayout.WEST);
+        mainPanel.add(pitsPanel, BorderLayout.CENTER);
+        mainPanel.add(rightMancalaPanel, BorderLayout.EAST);
+        mainPanel.add(labelPlayerA, BorderLayout.SOUTH);
+
     }
 
-    public void setBoardStyle(BoardStyle boardStyle){
+
+    public void setStyle(BoardStyle boardStyle){
         this.boardStyle = boardStyle;
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-
-        Random random = new Random();
-        pits = new ArrayList<>();
-        for (int i = 0; i < 12; i++){
-            pits.add(random.nextInt(7));
-        }
-
-
+        this.width = boardStyle.getWidth();
+        this.height = boardStyle.getHeight();
         MouseListener mouseListener = new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                //Model.update()
-                System.out.println(((JLabel)e.getSource()).getText());
+                boardModel.update(((JLabel) e.getSource()).getText());
             }
             public void mousePressed(MouseEvent e) {}
             public void mouseReleased(MouseEvent e) {}
@@ -44,34 +78,27 @@ public class BoardView extends JPanel implements ChangeListener{
             public void mouseExited(MouseEvent e) {}
         };
 
-        add(boardStyle.drawLabel("Player B"), BorderLayout.NORTH);
+        boardStyle.layoutStyle(mainPanel, boardModel, mouseListener);
 
-        add(boardStyle.drawPits(g, pits, mouseListener), BorderLayout.CENTER);
-
-        add(boardStyle.drawMancalas(g,null), BorderLayout.WEST);
-
-        add(boardStyle.drawMancalas(g,null), BorderLayout.EAST);
-
-        add(boardStyle.drawLabel("Player A"), BorderLayout.SOUTH);
-    }
-
-    /**
-     * Invoked when the target of the listener has changed its state.
-     * @param e a ChangeEvent object
-     */
-    @Override
-    public void stateChanged(ChangeEvent e) {
-        //pits = model.getState.getPits();
-        repaint();
+        setSize(boardStyle.getWidth(), boardStyle.getHeight() + UNDO_BUTTON_SPACING);
+        setVisible(true);
     }
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(WIDTH,HEIGHT);
+        return new Dimension(width, height);
     }
 
     @Override
     public Dimension getMinimumSize() {
         return getPreferredSize();
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        repaint();
+        boardStyle.markCurrentPlayer();
+        if (boardModel.getState().getIsGameOver())
+            new GameOverWindow();
     }
 }
