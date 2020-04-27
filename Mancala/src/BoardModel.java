@@ -29,14 +29,23 @@ public class BoardModel {
 		history.push(gameManager.load_current_GameState());
 	}
 
+	/**
+	 * @param c listener to attach to the model
+	 */
 	public void attach(ChangeListener c) {
 		this.listeners.add(c);
 	}
 
+	/**
+	 * @return the current game state
+	 */
 	public GameState getState() {
 		return history.peek();
 	}
 
+	/**
+	 * @param cell that the player has clicked on. Will use game manager to make changes 
+	 */
 	public void update(String cell) {
 		GameState currentState = history.peek();
 		boolean isPlayerA = currentState.get_next_isPlayerA();
@@ -71,40 +80,41 @@ public class BoardModel {
 		}
 	}
 
+	/**
+	 * used to go back to previous turns
+	 */
 	public void undo() {
 		// don't do anything if there is only one state in the history, which is the
 		// beginning state
 		if (history.size() == 1) {
 			return;
 		}
-		GameState currentState = history.peek();
-		boolean isPlayerA = currentState.get_cur_isPlayerA();
+		history.pop();
+		GameState prevState = history.peek();
+		boolean isPlayerA = prevState.get_cur_isPlayerA();
 
-		if (isPlayerA && playerAUndoCount < 3 && !currentState.get_just_undo()) {
-			history.pop();
-			GameState prevState = history.peek();
-			prevState.set_just_undo(true);
+		if (isPlayerA && playerAUndoCount < 3) {
 			gameManager.set_stoneInPit(prevState, 0);
 			playerAUndoCount++;
-			System.out.println(playerAUndoCount);
-		} else if (playerBUndoCount < 3 && !currentState.get_just_undo()) {
-			history.pop();
-			GameState prevState = history.peek();
-			prevState.set_just_undo(true);
+		} else if (playerBUndoCount < 3) {
 			gameManager.set_stoneInPit(prevState, 0);
 			playerBUndoCount++;
-			System.out.println(playerBUndoCount);
-		} else if(currentState.get_just_undo()) {
-			System.out.println("Cannot undo rn");
-		}else {
+		} else {
 			System.out.println("All undos have been used");
 		}
 	}
 
+	/**
+	 * @return the game manager of the model
+	 */
 	public GameManager getGameManager() {
 		return this.gameManager;
 	}
 
+	/**
+	 * 
+	 * @return the current game state
+	 */
 	public GameState getCurrentState() {
 		return history.peek();
 	}
