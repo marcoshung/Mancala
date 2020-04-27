@@ -1,12 +1,18 @@
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 public class BoardView extends JFrame implements ChangeListener{
+    public static final boolean RESIZABLE = false;
+    private static final int UNDO_BUTTON_SPACING = 100;
+    private static final int SCREEN_LOCATION = 200;
     private ArrayList<Integer> pits;
     private int width;
     private int height;
@@ -14,6 +20,46 @@ public class BoardView extends JFrame implements ChangeListener{
     private JLabel labelPlayerA, labelPlayerB;
     private BoardModel boardModel;
     private BoardStyle boardStyle;
+    private JPanel mainPanel;
+
+    public BoardView(BoardModel boardModel){
+        this.boardModel = boardModel;
+        setLayout(new BorderLayout());
+        mainPanel = new JPanel(new BorderLayout());
+        boardModel.attach(this);
+        setTitle("Mancala Board");
+        setLocation(SCREEN_LOCATION,SCREEN_LOCATION);
+        setResizable(RESIZABLE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        add(mainPanel, BorderLayout.NORTH);
+
+        pitsPanel = new JPanel();
+        leftMancalaPanel = new JPanel();
+        rightMancalaPanel = new JPanel();
+        labelPlayerA = new JLabel("Player A ->", JLabel.CENTER);
+        labelPlayerB = new JLabel("<- Player B", JLabel.CENTER);
+
+        JPanel bottomPanel = new JPanel();
+        JButton undoButton = new JButton("UNDO");
+        undoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boardModel.undo();
+                repaint();
+                boardStyle.markCurrentPlayer();
+            }
+        });
+
+        undoButton.setBounds(300, 300, 60, 20);
+        bottomPanel.add(undoButton);
+        add(bottomPanel, BorderLayout.SOUTH);
+
+        mainPanel.add(labelPlayerB, BorderLayout.NORTH);
+        mainPanel.add(leftMancalaPanel, BorderLayout.WEST);
+        mainPanel.add(pitsPanel, BorderLayout.CENTER);
+        mainPanel.add(rightMancalaPanel, BorderLayout.EAST);
+        mainPanel.add(labelPlayerA, BorderLayout.SOUTH);
+
 
     public BoardView(BoardModel boardModel){
         this.boardModel = boardModel;
@@ -52,6 +98,10 @@ public class BoardView extends JFrame implements ChangeListener{
             public void mouseExited(MouseEvent e) {}
         };
 
+        boardStyle.layoutStyle(mainPanel, boardModel, mouseListener);
+
+        setSize(boardStyle.getWidth(), boardStyle.getHeight() + UNDO_BUTTON_SPACING);
+
         boardStyle.layoutStyle(getContentPane(), boardModel ,mouseListener);
 
         pack();
@@ -72,5 +122,7 @@ public class BoardView extends JFrame implements ChangeListener{
     public void stateChanged(ChangeEvent e) {
         repaint();
         boardStyle.markCurrentPlayer();
+        if (boardModel.getState().getIsGameOver())
+            new GameOverWindow();
     }
 }

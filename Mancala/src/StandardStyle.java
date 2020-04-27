@@ -13,7 +13,7 @@ import java.util.Random;
  * Class for concrete custom styling of a Mancala board
  */
 public class StandardStyle implements BoardStyle {
-
+    private static final boolean DEBUG = true;
     private final int WIDTH, HEIGHT;
     private static final int GAP = 10;
     private static final int PIT_RATIO = 10;
@@ -101,15 +101,21 @@ public class StandardStyle implements BoardStyle {
         public void paintIcon(Component c, Graphics g, int x, int y) {
             ArrayList<Integer> mancalasArray = boardModel.getState().getMancala();
             Graphics2D g2 = (Graphics2D) g;
-            RoundRectangle2D mancala = new RoundRectangle2D.Double(0 , 0, MANCALA_SPACING, HEIGHT - 4 * MANCALA_SPACING ,10,10);
+            RoundRectangle2D mancala = new RoundRectangle2D.Double(0 , 0, MANCALA_SPACING, HEIGHT - MANCALA_SPACING ,GAP,GAP);
             g2.setColor(MANCALA_COLOR);
             g2.fill(mancala);
             g2.setColor(PEBBLES_COLOR);
+            int pebbleHeight = GAP;
+            boolean leftPebble = false;
             for (int i = 0; i < mancalasArray.get(mancalaIndex); i++){
-                g2.fill( new Ellipse2D.Double(GAP, random.nextInt(100), WIDTH / PEBBLES_RATIO, WIDTH / PEBBLES_RATIO)   );
+                leftPebble = !leftPebble;
+                pebbleHeight += GAP/2;
+                g2.fill( new Ellipse2D.Double((leftPebble ? GAP / 2 : GAP ), pebbleHeight, WIDTH / PEBBLES_RATIO, WIDTH / PEBBLES_RATIO)   );
             }
             g2.setColor(Color.RED);
-            g2.drawString((mancalaIndex == 1 ? "B:" : "A:") +String.valueOf(mancalasArray.get(mancalaIndex)),2,10);
+            if (DEBUG)
+                g2.drawString(String.valueOf(mancalasArray.get(mancalaIndex)),GAP/2,GAP);
+
         }
         @Override
         public int getIconWidth() {return MANCALA_SPACING;}
@@ -135,11 +141,13 @@ public class StandardStyle implements BoardStyle {
             g2.setColor(PEBBLES_COLOR);
             for (int i = 0; i < pits.get(pitIndex); i++){
                 double theta = Math.PI * i / (pits.get(pitIndex) +1) * 2;
-                int r = random.nextInt(WIDTH / PIT_RATIO / 4)+PIT_RATIO;
+                int r = PIT_RATIO;
                 g2.fill( new Ellipse2D.Double(PIT_RATIO * 3 + r * Math.cos(theta), PIT_RATIO * 3 + r * Math.sin(theta), WIDTH / PEBBLES_RATIO, WIDTH / PEBBLES_RATIO)   );
             }
             g2.setColor(Color.RED);
-            g2.drawString(String.valueOf(pits.get(pitIndex)),10,10);
+            if (DEBUG)
+                g2.drawString(String.valueOf(pits.get(pitIndex)),GAP,GAP);
+
         }
         @Override
         public int getIconWidth() {return WIDTH/PIT_RATIO;}
@@ -147,3 +155,4 @@ public class StandardStyle implements BoardStyle {
         public int getIconHeight() {return HEIGHT/PIT_RATIO;}
     }
 }
+
