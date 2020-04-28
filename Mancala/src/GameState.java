@@ -15,6 +15,7 @@ public class GameState {
     private Boolean next_isPlayerA;
     private Boolean isGameOver;
     private Boolean isInitState;
+    private boolean just_undo;
     private int state_status;
 
     public GameState(){
@@ -26,6 +27,7 @@ public class GameState {
         this.next_isPlayerA = false;
         this.isGameOver = false;
         this.isInitState = false;
+        this.just_undo = false;
         this.state_status = 0;
     }
 
@@ -60,6 +62,9 @@ public class GameState {
     public void set_next_isPlayerA(Boolean next_isPlayerA){
         this.next_isPlayerA = next_isPlayerA;
     }
+    public void set_just_undo(boolean undid) {
+    	this.just_undo = undid;
+    }
     public void set_state_status(int new_state_status){
         state_status = new_state_status;
     }
@@ -71,6 +76,7 @@ public class GameState {
     public Boolean get_next_isPlayerA(){return next_isPlayerA;}
     public Boolean getIsGameOver(){return isGameOver;}
     public Boolean isAble_to_load(){return isInitState;}
+    public Boolean get_just_undo() {return just_undo;}
     public int get_state_status(){return state_status;}
 
 

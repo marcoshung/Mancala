@@ -89,17 +89,24 @@ public class BoardModel {
 		if (history.size() == 1) {
 			return;
 		}
-		history.pop();
-		GameState prevState = history.peek();
-		boolean isPlayerA = prevState.get_cur_isPlayerA();
+		GameState currState = history.peek();
+		boolean isPlayerA = currState.get_cur_isPlayerA();
 
-		if (isPlayerA && playerAUndoCount < 3) {
+		if (isPlayerA && playerAUndoCount < 3 && !currState.get_just_undo()) {
+			history.pop();
+			GameState prevState = history.peek();
+			prevState.set_just_undo(true);
 			gameManager.set_stoneInPit(prevState, 0);
 			playerAUndoCount++;
-		} else if (playerBUndoCount < 3) {
+		} else if (playerBUndoCount < 3 && !currState.get_just_undo()) {
+			history.pop();
+			GameState prevState = history.peek();
+			prevState.set_just_undo(true);
 			gameManager.set_stoneInPit(prevState, 0);
 			playerBUndoCount++;
-		} else {
+		}else if(currState.get_just_undo()) {
+			System.out.println("Can't Undo again right now");
+		}else {
 			System.out.println("All undos have been used");
 		}
 	}
