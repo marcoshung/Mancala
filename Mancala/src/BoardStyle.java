@@ -9,8 +9,28 @@ import java.util.ArrayList;
  */
 
 public interface BoardStyle {
+   /**
+    * Sets the graphic style to the board
+    * @param container the Container which holds the mancala board
+    * @param boardModel the model of the game
+    * @param mouseListener a mouse listener for clicking the pits
+    */
    public void layoutStyle(Container container, BoardModel boardModel, MouseListener mouseListener);
+
+   /**
+    * Helper function to control the styling to mark the current player
+    */
    public void markCurrentPlayer();
+
+   /**
+    * gets the width of the board
+    * @return the width of the board
+    */
    public int getWidth();
+
+   /**
+    * gets the height of the board
+    * @return the height of the board
+    */
    public int getHeight();
 }
