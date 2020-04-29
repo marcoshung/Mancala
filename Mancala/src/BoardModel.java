@@ -11,21 +11,30 @@ import java.util.Stack;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
+/**
+ * Class to represent the the data model of the Mancala board
+ * @author marcoshung
+ *
+ */
 public class BoardModel {
 
 	private Stack<GameState> history;
 	private ArrayList<ChangeListener> listeners;
 	private GameManager gameManager;
-	private int INTIAL_MARBLES_IN_PITS = 3;
+	private int inital_marbles_in_pits;
 	private int playerAUndoCount, playerBUndoCount = 0;
 
+	
+	/**
+	 * Constructor
+	 * @param stones that will be the initial number of stones in teh board;
+	 */
 	public BoardModel(int stones) {
 		history = new Stack<GameState>();
 		listeners = new ArrayList<ChangeListener>();
 		gameManager = new GameManager();
-		INTIAL_MARBLES_IN_PITS = stones;
-		gameManager.set_stoneInPit(gameManager.load_current_GameState(), INTIAL_MARBLES_IN_PITS);
+		inital_marbles_in_pits = stones;
+		gameManager.set_stoneInPit(gameManager.load_current_GameState(), inital_marbles_in_pits);
 		history.push(gameManager.load_current_GameState());
 	}
 
@@ -44,6 +53,7 @@ public class BoardModel {
 	}
 
 	/**
+	 * method to update the board
 	 * @param cell that the player has clicked on. Will use game manager to make changes 
 	 */
 	public void update(String cell) {
@@ -66,14 +76,12 @@ public class BoardModel {
 			return;
 		}
 
-		// snow's editing
 		gameManager.playGame(getCurrentState(), pitLocation);
 
 		GameState toBePushedState = gameManager.load_current_GameState();
 		if (toBePushedState.get_state_status() == 1) {
 			history.push(toBePushedState);
 		}
-		// snow's editing done
 
 		for (ChangeListener l : this.listeners) {
 			l.stateChanged(new ChangeEvent(this));
@@ -82,6 +90,7 @@ public class BoardModel {
 
 	/**
 	 * used to go back to previous turns
+	 * limits to three undos per player and cant undo twice in a row
 	 */
 	public void undo() {
 		// don't do anything if there is only one state in the history, which is the
