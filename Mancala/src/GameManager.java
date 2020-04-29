@@ -94,7 +94,7 @@ public class GameManager {
         }
 
         cur_isPlayerA = false;
-        next_isPlayerA = false;
+        next_isPlayerA = true;
         isGameOver = false;
         isAvaliableRound = true;
         System.out.println("GameManager->init_Game(): ");
