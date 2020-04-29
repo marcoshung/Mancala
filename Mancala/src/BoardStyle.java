@@ -12,15 +12,15 @@ public interface BoardStyle {
    /**
     * Sets the graphic style to the board
     * @param container the Container which holds the mancala board
-    * @param boardModel the model of the game
-    * @param mouseListener a mouse listener for clicking the pits
+    * @param boardView the view of the game
     */
-   public void layoutStyle(Container container, BoardModel boardModel, MouseListener mouseListener);
+   public void layoutStyle(Container container, BoardView boardView);
 
    /**
     * Helper function to control the styling to mark the current player
+    * @param boardView the view of the game
     */
-   public void markCurrentPlayer();
+   public void markCurrentPlayer(BoardView boardView);
 
    /**
     * gets the width of the board

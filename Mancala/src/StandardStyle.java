@@ -1,19 +1,14 @@
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Class for STANDARD STYLE concrete custom styling of a Mancala board
  */
 public class StandardStyle implements BoardStyle {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private final int WIDTH, HEIGHT;
     private static final int GAP = 10;
     private static final int PIT_RATIO = 10;
@@ -23,7 +18,6 @@ public class StandardStyle implements BoardStyle {
     private static final Color MANCALA_COLOR = Color.BLUE;
     private static final Color PEBBLES_COLOR = Color.YELLOW;
     private JLabel labelPlayerA, labelPlayerB;
-    private BoardModel boardModel;
 
     /**
      * Constructor
@@ -54,11 +48,9 @@ public class StandardStyle implements BoardStyle {
     /**
      * Sets the graphic style to the board
      * @param container the Container which holds the mancala board
-     * @param boardModel the model of the game
-     * @param mouseListener a mouse listener for clicking the pits
+     * @param boardView the view of the game
      */
-    public void layoutStyle(Container container, BoardModel boardModel, MouseListener mouseListener) {
-        this.boardModel = boardModel;
+    public void layoutStyle(Container container, BoardView boardView) {
         Component[] components = container.getComponents();
         labelPlayerB = (JLabel) components[0];
         JPanel leftMancalaPanel = (JPanel) components[1];
@@ -69,32 +61,33 @@ public class StandardStyle implements BoardStyle {
 
         labelPlayerB.add(new JLabel("<- Player B"));
         labelPlayerA.add(new JLabel("Player A ->"));
-        markCurrentPlayer();
-        leftMancalaPanel.add(new JLabel(new Mancala(1)));
-        rightMancalaPanel.add(new JLabel(new Mancala(0)));
+        markCurrentPlayer(boardView);
+        leftMancalaPanel.add(new JLabel(new Mancala(1, boardView)));
+        rightMancalaPanel.add(new JLabel(new Mancala(0, boardView)));
         pitsPanel.setLayout(new GridLayout(2,6));
 
-        ArrayList<Integer> pits = boardModel.getState().getPits();
+        ArrayList<Integer> pits = boardView.getBoardModel().getState().getPits();
         for ( int i = pits.size()-1; i >= pits.size() / 2; i--){
             String text = "B" + String.valueOf((i % (pits.size()/2)) + 1);
-            JLabel label = new JLabel(text,new Pit(i),JLabel.LEADING);
-            label.addMouseListener(mouseListener);
+            JLabel label = new JLabel(text,new Pit(i,boardView),JLabel.LEADING);
+            label.addMouseListener(boardView.getMouseListener());
             pitsPanel.add(label);
         }
 
         for ( int i = 0 ; i < pits.size()/2; i++){
             String text = "A" + String.valueOf((i % (pits.size()/2)) + 1);
-            JLabel label = new JLabel(text,new Pit(i),JLabel.LEADING);
-            label.addMouseListener(mouseListener);
+            JLabel label = new JLabel(text,new Pit(i, boardView),JLabel.LEADING);
+            label.addMouseListener(boardView.getMouseListener());
             pitsPanel.add(label);
         }
     }
 
     /**
      * Helper function to control the styling to mark the current player
+     * @param boardView the view of the game
      */
-    public void markCurrentPlayer(){
-        if (boardModel.getState().get_next_isPlayerA()){
+    public void markCurrentPlayer(BoardView boardView){
+        if (boardView.getBoardModel().getState().get_next_isPlayerA()){
             labelPlayerA.setForeground(Color.GREEN);
             labelPlayerB.setForeground(Color.BLACK);
         } else {
@@ -108,13 +101,14 @@ public class StandardStyle implements BoardStyle {
     //Implements represntation of a mancala
     private class Mancala implements Icon {
         private final int mancalaIndex;
-        public Mancala(int mancalaIndex){
+        private final BoardView boardView;
+        public Mancala(int mancalaIndex, BoardView boardView){
             this.mancalaIndex = mancalaIndex;
+            this.boardView = boardView;
         }
-
         @Override
         public void paintIcon(Component c, Graphics g, int x, int y) {
-            ArrayList<Integer> mancalasArray = boardModel.getState().getMancala();
+            ArrayList<Integer> mancalasArray = boardView.getBoardModel().getState().getMancala();
             Graphics2D g2 = (Graphics2D) g;
             RoundRectangle2D mancala = new RoundRectangle2D.Double(0 , 0, MANCALA_SPACING, HEIGHT - MANCALA_SPACING ,GAP,GAP);
             g2.setColor(MANCALA_COLOR);
@@ -141,13 +135,14 @@ public class StandardStyle implements BoardStyle {
     // Implements the represenatation of a pit
     private class Pit implements Icon {
         private final int pitIndex;
-
-        public Pit(int pitIndex){
+        private final BoardView boardView;
+        public Pit(int pitIndex, BoardView boardView){
             this.pitIndex = pitIndex;
+            this.boardView = boardView;
         }
         @Override
         public void paintIcon(Component c, Graphics g, int x, int y) {
-            ArrayList<Integer> pits = boardModel.getState().getPits();
+            ArrayList<Integer> pits = boardView.getBoardModel().getState().getPits();
             Graphics2D g2 = (Graphics2D) g;
             Ellipse2D pitTop = new Ellipse2D.Double(0, 0, WIDTH / PIT_RATIO, WIDTH / PIT_RATIO);
             g2.setColor(PITS_COLOR);

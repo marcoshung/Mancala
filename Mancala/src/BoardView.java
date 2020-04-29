@@ -55,7 +55,7 @@ public class BoardView extends JFrame implements ChangeListener{
             public void actionPerformed(ActionEvent e) {
                 boardModel.undo();
                 repaint();
-                boardStyle.markCurrentPlayer();
+                boardStyle.markCurrentPlayer(BoardView.this);
             }
         });
 
@@ -79,23 +79,27 @@ public class BoardView extends JFrame implements ChangeListener{
         this.boardStyle = boardStyle;
         this.width = boardStyle.getWidth();
         this.height = boardStyle.getHeight();
-        MouseListener mouseListener = new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                boardModel.update(((JLabel) e.getSource()).getText());
-            }
-            public void mousePressed(MouseEvent e) {}
-            public void mouseReleased(MouseEvent e) {}
-            public void mouseEntered(MouseEvent e) {}
-            public void mouseExited(MouseEvent e) {}
-        };
-
-        boardStyle.layoutStyle(mainPanel, boardModel, mouseListener);
+        boardStyle.layoutStyle(mainPanel, this);
 
         setSize(boardStyle.getWidth(), boardStyle.getHeight() + UNDO_BUTTON_SPACING);
         setVisible(true);
     }
 
+    /**
+     * Gets the Mouse Listener for clicks on pits
+     * @return mouse listener
+     */
+    public MouseListener getMouseListener() {
+        return mouseListener;
+    }
+
+    /**
+     * Gets the board model
+     * @return the board nodel
+     */
+    public BoardModel getBoardModel() {
+        return boardModel;
+    }
 
     /**
      * Notifies the view about a change in the model
@@ -104,8 +108,19 @@ public class BoardView extends JFrame implements ChangeListener{
     @Override
     public void stateChanged(ChangeEvent e) {
         repaint();
-        boardStyle.markCurrentPlayer();
+        boardStyle.markCurrentPlayer(BoardView.this);
         if (boardModel.getState().getIsGameOver())
             new GameOverWindow();
     }
+
+    private MouseListener mouseListener = new MouseListener() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            boardModel.update(((JLabel) e.getSource()).getText());
+        }
+        public void mousePressed(MouseEvent e) {}
+        public void mouseReleased(MouseEvent e) {}
+        public void mouseEntered(MouseEvent e) {}
+        public void mouseExited(MouseEvent e) {}
+    };
 }

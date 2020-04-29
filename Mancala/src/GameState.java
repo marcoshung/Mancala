@@ -110,8 +110,7 @@ public class GameState {
 
     /**
      * Set the current state statues
-     * 
-     * @param new_state_statues new state statues
+     * @param new_state_status new state statues
      */
     public void set_state_status(int new_state_status) {
         state_status = new_state_status;
@@ -119,7 +118,7 @@ public class GameState {
 
     /**
      * Set undo param
-     * @param undid
+     * @param undid did the undo has been done
     */
     public void set_just_undo(boolean undid) {
         this.just_undo = undid;
