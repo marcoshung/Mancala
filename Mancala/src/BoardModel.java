@@ -119,7 +119,6 @@ public class BoardModel {
 			System.out.println("All undos have been used");
 		}
 	}
-
 	/**
 	 * @return the game manager of the model
 	 */
